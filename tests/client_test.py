@@ -44,6 +44,11 @@ class TestClient():
         assert len(books) > 0
         assert all(isinstance(book, GoodreadsBook) for book in books)
 
+    def test_search_books_flat(self):
+        books = self.client.search_books("The selfish gene", flat=False)
+        assert len(books) > 0
+        assert all(isinstance(book, tuple) for book in books)
+
     def test_group_by_id(self):
         group_id = '1'
         group = self.client.group(group_id)

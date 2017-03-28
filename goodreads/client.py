@@ -96,14 +96,15 @@ class GoodreadsClient():
         else:
             raise GoodreadsClientException("book id or isbn required")
 
-    def search_books(self, q, page=1, search_field='all'):
+    def search_books(self, q, page=1, search_field='all', flat=True):
         """Get the most popular books for the given query. This will search all
         books in the title/author/ISBN fields and show matches, sorted by
         popularity on Goodreads.
         :param q: query text
         :param page: which page to return (default 1)
-        :param search_fields: field to search, one of 'title', 'author' or
+        :param search_field: field to search, one of 'title', 'author' or
         'genre' (default is 'all')
+        :param flat: set field on false to get only title and #text values
         """
         resp = self.request("search/index.xml",
                             {'q': q, 'page': page, 'search[field]': search_field})
@@ -111,7 +112,12 @@ class GoodreadsClient():
         # If there's only one work returned, put it in a list.
         if type(works) == collections.OrderedDict:
             works = [works]
-        return [self.book(work['best_book']['id']['#text']) for work in works]
+        if flat:
+            return [self.book(work['best_book']['id']['#text']) for work in works]
+        else:
+            return [(work['best_book']['id']['#text'],
+                     work['best_book']['title'],
+                     work['best_book']['author']) for work in works]
 
     def group(self, group_id):
         """Get info about a group"""
