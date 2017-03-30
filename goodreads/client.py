@@ -85,13 +85,21 @@ class GoodreadsClient():
         resp = self.request("api/author_url/%s" % author_name, {})
         return self.author(resp['author']['@id']) if 'author' in resp else None
 
-    def book(self, book_id=None, isbn=None):
+    def book(self, book_id=None, isbn=None, title=None, author=None):
         """Get info about a book"""
         if book_id:
             resp = self.request("book/show", {'id': book_id})
             return GoodreadsBook(resp['book'], self)
         elif isbn:
             resp = self.request("book/isbn", {'isbn': isbn})
+            return GoodreadsBook(resp['book'], self)
+        elif title or author:
+            query = {}
+            if title:
+                query['title'] = title
+            if author:
+                query['author'] = author
+            resp = self.request("book/title", query)
             return GoodreadsBook(resp['book'], self)
         else:
             raise GoodreadsClientException("book id or isbn required")

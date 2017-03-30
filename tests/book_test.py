@@ -20,6 +20,23 @@ class TestBook():
         assert self.book.gid == '11870085'
         assert repr(self.book) == 'The Fault in Our Stars'
 
+    def test_get_book_by_title(self):
+        client = GoodreadsClient(apikey.key, apikey.secret)
+        client.authenticate(apikey.oauth_access_token,
+                            apikey.oauth_access_token_secret)
+        book_by_title = client.book(title='The Fault in Our Stars')
+        assert isinstance(book_by_title, GoodreadsBook)
+        assert book_by_title.gid == '11870085'
+
+    def test_get_book_by_author(self):
+        client = GoodreadsClient(apikey.key, apikey.secret)
+        client.authenticate(apikey.oauth_access_token,
+                            apikey.oauth_access_token_secret)
+        book_by_author = client.book(title='The Fault in Our Stars',
+                                     author=self.book.authors[0])
+        assert isinstance(book_by_author, GoodreadsBook)
+        assert book_by_author.gid == '11870085'
+
     def test_title(self):
         assert self.book.title == 'The Fault in Our Stars'
 
