@@ -99,10 +99,13 @@ class GoodreadsClient():
                 query['title'] = title
             if author:
                 query['author'] = author
-            resp = self.request("book/title", query)
-            return GoodreadsBook(resp['book'], self)
+            try:
+                resp = self.request("book/title", query)
+                return GoodreadsBook(resp['book'], self)
+            except:
+                raise GoodreadsClientException("Invalid query book: %s" % query)
         else:
-            raise GoodreadsClientException("book id or isbn required")
+            raise GoodreadsClientException("book id,isbn or title  required")
 
     def search_books(self, q, page=1, search_field='all'):
         """Get the most popular books for the given query. This will search all
